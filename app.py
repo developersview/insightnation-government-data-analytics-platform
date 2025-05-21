@@ -50,6 +50,7 @@ def upload_dataset():
 # ----------------------------
 # EDA and Feedback Insights
 # ----------------------------
+
 def citizen_feedback_insights():
     df = st.session_state.get("df")
     if df is None:
@@ -71,8 +72,9 @@ def citizen_feedback_insights():
         sample_text = " ".join(df["local_service_suggestions"].dropna().astype(str).sample(10))
         if sample_text:
             prompt = f"Summarize key citizen feedback themes from the following text: {sample_text}. Also, provide a sentiment score (positive, negative, neutral) for each theme."
-            response = model.generate_content(prompt)
-            st.success(response.text)
+            with st.spinner("Generating insights with Gemini..."):
+                response = model.generate_content(prompt)
+                st.success(response.text)
 
 # # ----------------------------
 # # Citizen Interaction Chatbot
@@ -122,8 +124,9 @@ def ai_policy_advisor():
     if st.button("Generate Strategies"):
         if scenario:
             prompt = f"Suggest 3 detailed strategies to improve public service based on this scenario: {scenario}"
-            response = model.generate_content(prompt)
-            st.success(response.text)
+            with st.spinner("Generating strategies with Gemimi..."):
+                response = model.generate_content(prompt)
+                st.success(response.text)
 
 # ----------------------------
 # Visual Analytics Dashboard
@@ -237,10 +240,11 @@ def sentiment_swot():
     if st.button("Generate SWOT Analysis"):
         sample_feedback = " ".join(df["local_service_suggestions"].dropna().astype(str).sample(10))
 
-        prompt = f"Based on the following citizen feedback, generate a SWOT analysis and Also Gerate a 2x2 table of SWOT:\n\n{sample_feedback}"
-        response = model.generate_content(prompt)
-
-        st.success(response.text)
+        prompt = f"Generate a SWOT analysis and Also Genarate a 2x2 table of SWOT:\n\n{sample_feedback}"
+        
+        with st.spinner("Generating SWOT analysis with Gemini..."):
+            response = model.generate_content(prompt)
+            st.success(response.text)
 
 # ----------------------------
 # Sidebar Navigation
