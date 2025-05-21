@@ -11,8 +11,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 # --- Load data ---
-data_path = os.getenv("cleaned_csv_path")
-df = pd.read_csv(data_path)
+# data_path = os.getenv("cleaned_csv_path")
+# df = pd.read_csv(data_path)
 
 # ----------------------------
 # Setup Google Gemini API
@@ -293,4 +293,9 @@ elif menu == "📊 Visual Analytics Dashboard":
 elif menu == "🧩 Sentiment SWOT Analysis":
     sentiment_swot()
 
-st.sidebar.info("©️ 2025 InsightNation. All rights reserved.")
+# st.sidebar.info("©️ 2025 InsightNation. All rights reserved.")
+
+# for _ in range(15):  # Adjust this number based on content length
+#     st.write("  ")
+
+st.markdown("©️ 2025 InsightNation. All rights reserved.")
