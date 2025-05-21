@@ -1,11 +1,11 @@
-ipykernel
+#ipykernel
 pandas
 numpy
 matplotlib
 seaborn
 wordcloud
 scikit-learn
-spacy
+#spacy
 python-dotenv
 streamlit
 google-generativeai
