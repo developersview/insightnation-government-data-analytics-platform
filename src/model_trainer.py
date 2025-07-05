@@ -43,7 +43,7 @@ svm_preds = svm.predict(X_test)
 print("\nSVM Report:\n", classification_report(y_test, svm_preds))
 
 # Save models
-joblib.dump(log_reg, "D:/AMITY/Semester_4/5. Major Project/mba-semester4-major-project-qollabb/ProjectApp/models/logistic_model.pkl")
-joblib.dump(svm, "D:/AMITY/Semester_4/5. Major Project/mba-semester4-major-project-qollabb/ProjectApp/models/svm_model.pkl")
-joblib.dump(vectorizer, "D:/AMITY/Semester_4/5. Major Project/mba-semester4-major-project-qollabb/ProjectApp/models/tfidf_vectorizer.pkl")
+joblib.dump(log_reg, "D:/insightnation-government-data-analytics-platform/models/logistic_model.pkl")
+joblib.dump(svm, "D:/insightnation-government-data-analytics-platform/models/svm_model.pkl")
+joblib.dump(vectorizer, "D:/insightnation-government-data-analytics-platform/models/tfidf_vectorizer.pkl")
 print("\nModels and vectorizer saved to /models")
