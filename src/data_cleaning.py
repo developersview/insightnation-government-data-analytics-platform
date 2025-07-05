@@ -32,3 +32,4 @@ print(df.head())
 
 # Step 6: Save the cleaned data for next phase (optional)
 df.to_csv(output_filepath, index=False)
+print(f"✅ Cleaned data saved to {output_filepath}")
