@@ -1,6 +1,5 @@
 import joblib
 import pandas as pd
-from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 import os
 
