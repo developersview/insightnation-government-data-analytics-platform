@@ -2,15 +2,23 @@ import joblib
 import pandas as pd
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
+import os
 
 
 
 # Function to classify new text input
 def classify_text(text):
     # Load models and vectorizer
-    log_model = joblib.load("D:/insightnation-government-data-analytics-platform/models/logistic_model.pkl")
-    svm_model = joblib.load("D:/insightnation-government-data-analytics-platform/models/svm_model.pkl")
-    vectorizer = joblib.load("D:/insightnation-government-data-analytics-platform/models/tfidf_vectorizer.pkl")
+    # log_model = joblib.load("D:/insightnation-government-data-analytics-platform/models/logistic_model.pkl")
+    # svm_model = joblib.load("D:/insightnation-government-data-analytics-platform/models/svm_model.pkl")
+    # vectorizer = joblib.load("D:/insightnation-government-data-analytics-platform/models/tfidf_vectorizer.pkl")
+
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    MODEL_DIR = os.path.join(BASE_DIR, "models")
+    #print(f"Model Directory: {MODEL_DIR}")
+    log_model = joblib.load(os.path.join(MODEL_DIR, "logistic_model.pkl"))
+    svm_model = joblib.load(os.path.join(MODEL_DIR, "svm_model.pkl"))
+    vectorizer = joblib.load(os.path.join(MODEL_DIR, "tfidf_vectorizer.pkl"))
 
     # Preprocess and vectorize the text
     text_vectorized = vectorizer.transform([text])
