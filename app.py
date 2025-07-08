@@ -8,26 +8,22 @@ import google.generativeai as genai
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 from dotenv import load_dotenv
+from src.model_classifier import classify_text
+import time
 
 load_dotenv()
-# --- Load data ---
-# data_path = os.getenv("cleaned_csv_path")
-# df = pd.read_csv(data_path)
 
-# ----------------------------
+# --------------------------------------------------------------------------------------------------------------
 # Setup Google Gemini API
-# ----------------------------
+# --------------------------------------------------------------------------------------------------------------
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel("gemini-2.0-flash")
 
-# ----------------------------
+# --------------------------------------------------------------------------------------------------------------
 # App Config
-# ----------------------------
+# --------------------------------------------------------------------------------------------------------------
 st.set_page_config(page_title="InsightNation Dashboard", layout="wide")
 st.title("InsightNation - Government Data Analytics Platform")
-
-
-
 
 # Initialize Session State
 if "chat_history" not in st.session_state:
@@ -36,9 +32,9 @@ if "chat_history" not in st.session_state:
 if "feedback_log" not in st.session_state:
     st.session_state.feedback_log = []
 
-# ----------------------------
+# --------------------------------------------------------------------------------------------------------------
 # File Upload Section
-# ----------------------------
+# --------------------------------------------------------------------------------------------------------------
 def upload_dataset():
     uploaded_file = st.file_uploader("Upload your cleaned citizen feedback CSV:", type=["csv"])
     if uploaded_file:
@@ -47,10 +43,11 @@ def upload_dataset():
         st.dataframe(df.head(20))
         st.session_state["df"] = df
 
-# ----------------------------
-# EDA and Feedback Insights
-# ----------------------------
 
+
+# --------------------------------------------------------------------------------------------------------------
+# Citizen Feedback Insights
+# ---------------------------------------------------------------------------------------------------------------
 def citizen_feedback_insights():
     df = st.session_state.get("df")
     if df is None:
@@ -76,61 +73,11 @@ def citizen_feedback_insights():
                 response = model.generate_content(prompt)
                 st.success(response.text)
 
-# # ----------------------------
-# # Citizen Interaction Chatbot
-# # ----------------------------
-# def citizen_chatbot():
-#     st.header("BizMate - Your Business Chatbot")
-#     st.markdown("Ask questions about business strategy, analytics, or case study scenarios")
-
-#     # if "chat_historty" not in st.session_state:
-#     #     st.session_state.chat_history = []
-
-#     user_input = st.chat_input("Ask your virtual business consultant...")
 
 
-#     if user_input:
-#         chat_prompt = """ You are a business strategy consultant. Use previous conversation context to give informed answers"""
-#         history = "\n".join([f"User: {msg['user']}\nAI: {msg['ai']}" for msg in st.session_state.chat_history])
-        
-#         full_prompt = f""" 
-#             {chat_prompt} 
-#             {history}
-#             User: {user_input}
-#             AI:
-#         """
-
-#         response = model.generate_content(full_prompt)
-#         reply = response.text
-
-#         st.session_state.chat_history.append({
-#             "user": user_input,
-#             "ai": reply
-#         })
-
-#     for idx, msg in enumerate(st.session_state.chat_history):
-#         with st.chat_message("user"):
-#             st.markdown(msg["user"])
-#         with st.chat_message("ai"):
-#             st.markdown(msg["ai"])
-
-# ----------------------------
-# AI Policy Advisor
-# ----------------------------
-def ai_policy_advisor():
-    st.subheader("AI Policy Advisor for Public Services")
-    scenario = st.text_area("Describe a public service scenario:")
-
-    if st.button("Generate Strategies"):
-        if scenario:
-            prompt = f"Suggest 3 detailed strategies to improve public service based on this scenario: {scenario}"
-            with st.spinner("Generating strategies with Gemimi..."):
-                response = model.generate_content(prompt)
-                st.success(response.text)
-
-# ----------------------------
+# --------------------------------------------------------------------------------------------------------------
 # Visual Analytics Dashboard
-# ----------------------------
+# --------------------------------------------------------------------------------------------------------------
 def visual_dashboard():
     df = st.session_state.get("df")
     if df is None:
@@ -226,10 +173,11 @@ def visual_dashboard():
     ax.axis("off")
     st.pyplot(fig)
 
-    
-# ----------------------------
+
+
+# --------------------------------------------------------------------------------------------------------------
 # Sentiment SWOT Analysis
-# ----------------------------
+# --------------------------------------------------------------------------------------------------------------
 def sentiment_swot():
     df = st.session_state.get("df")
     if df is None:
@@ -246,35 +194,66 @@ def sentiment_swot():
             response = model.generate_content(prompt)
             st.success(response.text)
 
-# ----------------------------
+
+
+# --------------------------------------------------------------------------------------------------------------
+# AI Policy Advisor
+# --------------------------------------------------------------------------------------------------------------
+def ai_policy_advisor():
+    st.subheader("AI Policy Advisor for Public Services")
+    scenario = st.text_area("Describe a public service scenario:")
+
+    if st.button("Generate Strategies"):
+        if scenario:
+            prompt = f"Suggest 3 detailed strategies to improve public service based on this scenario: {scenario}"
+            with st.spinner("Generating strategies with Gemimi..."):
+                response = model.generate_content(prompt)
+                st.success(response.text)
+
+
+# --------------------------------------------------------------------------------------------------------------
+# Sentiment Prediction
+# --------------------------------------------------------------------------------------------------------------
+def predict_sentiment():
+    df = st.session_state.get("df")
+    if df is None:
+        st.warning("Please upload a dataset first.")
+        return
+    else:
+        time.sleep(2)  # Simulate loading time
+        st.success("Models loaded successfully! ✅")
+
+        st.subheader("Sentiment Analysis of Citizen Feedback")
+        feedback_text = st.text_area("Enter feedback text to analyze sentiment:")
+        if st.button("Predict Sentiment"):
+            if feedback_text:
+                with st.spinner("Analyzing sentiment..."):
+                    time.sleep(2)  # Simulate processing time
+                    log_sentiment, svm_sentiment = classify_text(feedback_text)
+
+                    if log_sentiment == "Positive" or log_sentiment == "positive":
+                        st.success(f"Logistic Regression Sentiment: {log_sentiment}")
+                    else:
+                        st.error(f"Logistic Regression Sentiment: {log_sentiment}")
+
+                    if svm_sentiment == "Positive" or svm_sentiment == "positive":
+                        st.success(f"SVM Sentiment: {svm_sentiment}")
+                    else:
+                        st.error(f"SVM Sentiment: {svm_sentiment}")
+                    
+                    st.session_state.feedback_log.append({
+                        "text": feedback_text,
+                        "logistic_regression": log_sentiment,
+                        "svm": svm_sentiment
+                    })
+            else:
+                st.warning("Please enter some feedback text.")
+
+
+
+# --------------------------------------------------------------------------------------------------------------
 # Sidebar Navigation
-# ----------------------------
-
-# # Sidebar Navigation
-# page = st.sidebar.radio("Go to", [
-#     "📂 Upload New Dataset",
-#     "📈 Citizen Feedback Insights", 
-#     "📊 Visual Analytics Dashboard",  
-#     "🧩 Sentiment SWOT Analysis",
-#     "⚙️ AI Policy Advisor"
-    
-# ])
-
-# if page == "📂 Upload New Dataset":
-#     upload_dataset()
-# elif page == "📈 Citizen Feedback Insights":
-#     citizen_feedback_insights()
-# elif page == "⚙️ AI Policy Advisor":
-#     ai_policy_advisor()
-# elif page == "📊 Visual Analytics Dashboard":
-#     visual_dashboard()
-# elif page == "🧩 Sentiment SWOT Analysis":
-#     sentiment_swot()
-
-
-# ----------------------------
-# Sidebar Navigation
-# ----------------------------
+# --------------------------------------------------------------------------------------------------------------
 menu = st.sidebar.selectbox(
     "Navigate",
     [
@@ -283,6 +262,7 @@ menu = st.sidebar.selectbox(
         "📊 Visual Analytics Dashboard",
         "🧩 Sentiment SWOT Analysis",
         "🤖 AI Policy Advisor",
+        "💭 Predict Sentiment"
     ]
 )
 
@@ -296,10 +276,8 @@ elif menu == "📊 Visual Analytics Dashboard":
     visual_dashboard()
 elif menu == "🧩 Sentiment SWOT Analysis":
     sentiment_swot()
+elif menu == "💭 Predict Sentiment":
+    predict_sentiment()
 
-# st.sidebar.info("©️ 2025 InsightNation. All rights reserved.")
-
-# for _ in range(15):  # Adjust this number based on content length
-#     st.write("  ")
 
 st.markdown("©️ 2025 InsightNation. All rights reserved.")
